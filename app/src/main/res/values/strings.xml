@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SimpleContacts</string>
+    <string name="google_logo_description">Google logo</string>
+    <string name="btn_sign_in_with_google_text">Sign in with Google</string>
+</resources>
