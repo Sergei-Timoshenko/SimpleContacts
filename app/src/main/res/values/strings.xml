@@ -4,4 +4,8 @@
     <string name="btn_sign_in_with_google_text">Sign in with Google</string>
 
     <string name="web_client_id">19214316550-avnvktav1b6i6i52h2io6akjhtr81qi5.apps.googleusercontent.com</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tv_active_users_text">Active users:</string>
+    <string name="btn_sign_out_text">Sign out</string>
 </resources>

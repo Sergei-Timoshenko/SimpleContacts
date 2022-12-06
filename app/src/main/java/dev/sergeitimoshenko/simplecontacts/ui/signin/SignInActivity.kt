@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dev.sergeitimoshenko.simplecontacts.databinding.ActivitySignInBinding
-import dev.sergeitimoshenko.simplecontacts.ui.simplecontacts.SimpleContactsActivity
+import dev.sergeitimoshenko.simplecontacts.ui.simplecontacts.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,8 +74,8 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun navigateToSimpleContactsActivity() {
-        val simpleContactsActivityIntent = Intent(this@SignInActivity, SimpleContactsActivity::class.java)
-        startActivity(simpleContactsActivityIntent)
+        val mainActivityIntent = Intent(this@SignInActivity, MainActivity::class.java)
+        startActivity(mainActivityIntent)
         finish()
     }
 }
