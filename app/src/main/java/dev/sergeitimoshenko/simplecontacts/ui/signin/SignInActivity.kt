@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dev.sergeitimoshenko.simplecontacts.databinding.ActivitySignInBinding
-import dev.sergeitimoshenko.simplecontacts.ui.simplecontacts.MainActivity
+import dev.sergeitimoshenko.simplecontacts.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

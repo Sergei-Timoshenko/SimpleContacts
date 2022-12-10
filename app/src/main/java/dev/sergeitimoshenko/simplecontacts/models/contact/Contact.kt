@@ -27,7 +27,7 @@ data class Contact(
     val image: Bitmap? = null,
 
     @ColumnInfo(name = "contact_is_favorite")
-    val isFavorite: Boolean,
+    val isFavorite: Boolean = false,
 
     @PrimaryKey(autoGenerate = false)
     val id: String = UUID.randomUUID().toString()
