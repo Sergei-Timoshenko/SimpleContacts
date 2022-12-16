@@ -10,9 +10,12 @@ import androidx.room.Update
 import dev.sergeitimoshenko.simplecontacts.models.contact.Contact
 
 @Dao
-interface ContactsDao {
+interface ContactDao {
     @Query("SELECT * FROM contact_table")
     fun getAllContacts(): LiveData<List<Contact>>
+
+    @Query("SELECT * FROM contact_table WHERE contact_phone = :phoneNumber")
+    fun getContactsByPhoneNumber(phoneNumber: String): LiveData<List<Contact>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertContact(contact: Contact)

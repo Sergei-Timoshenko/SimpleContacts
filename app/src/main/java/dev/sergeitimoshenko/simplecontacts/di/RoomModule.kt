@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.sergeitimoshenko.simplecontacts.db.ContactsDatabase
+import dev.sergeitimoshenko.simplecontacts.utils.DATABASE_NAME
 import javax.inject.Singleton
 
 @Module
@@ -18,12 +19,12 @@ object RoomModule {
         Room.databaseBuilder(
             app,
             ContactsDatabase::class.java,
-            ContactsDatabase.DATABASE_NAME
+            DATABASE_NAME
         )
             .fallbackToDestructiveMigration()
             .build()
 
     @Singleton
     @Provides
-    fun provideContactsDao(db: ContactsDatabase) = db.getContactsDao()
+    fun provideContactsDao(db: ContactsDatabase) = db.getContactDao()
 }

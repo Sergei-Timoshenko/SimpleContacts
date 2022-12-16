@@ -5,9 +5,10 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class FavoriteContact(
+data class SimpleContact(
     val name: String,
     val surname: String,
-    val phone: String,
-    val image: Bitmap? = null
+    val phoneNumber: String,
+    val image: Bitmap? = null,
+    val id: String
 ) : Parcelable

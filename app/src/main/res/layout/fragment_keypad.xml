@@ -1,14 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.keypad.KeypadFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_keypad"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.6"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/btn_enter_digit_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="2"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_five"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_digit_three"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_digit_one"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="1"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_four"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_digit_two"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_three"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="3"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_six"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_digit_two"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_four"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="4"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_seven"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_digit_five"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_one" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_five"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="5"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_eight"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_digit_six"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_digit_four"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_two" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_six"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="6"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_nine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_digit_five"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_three" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_seven"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="7"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_asterisk"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_digit_eight"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_four" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_eight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="8"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_zero"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_digit_nine"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_digit_seven"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_five" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_nine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="9"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_hash"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_digit_eight"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_six" />
+
+        <Button
+            android:id="@+id/btn_enter_asterisk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="*"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_digit_zero"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_seven" />
+
+        <Button
+            android:id="@+id/btn_enter_digit_zero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="0/+"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_enter_hash"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_asterisk"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_eight" />
+
+        <Button
+            android:id="@+id/btn_enter_hash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="#"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_enter_digit_zero"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_nine" />
+
+        <Button
+            android:id="@+id/btn_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Call"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="@+id/btn_enter_digit_zero"
+            app:layout_constraintStart_toStartOf="@+id/btn_enter_digit_zero"
+            app:layout_constraintTop_toBottomOf="@+id/btn_enter_digit_zero" />
+
+        <TextView
+            android:id="@+id/tv_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+380689995803"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ibtn_remove"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ibtn_remove" />
+
+        <ImageButton
+            android:id="@+id/ibtn_remove"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_remove"
+            app:layout_constraintBottom_toTopOf="@+id/btn_enter_digit_three"
+            app:layout_constraintEnd_toEndOf="@+id/btn_enter_digit_three"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,7 +18,7 @@ data class Contact(
     val surname: String,
 
     @ColumnInfo(name = "contact_phone")
-    val phone: String,
+    val phoneNumber: String,
 
     @ColumnInfo(name = "contact_email")
     val email: String? = null,

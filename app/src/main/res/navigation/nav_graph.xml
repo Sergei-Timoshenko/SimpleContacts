@@ -48,6 +48,9 @@
         <action
             android:id="@+id/action_keypadFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />
+        <action
+            android:id="@+id/action_keypadFragment_to_contactFragment"
+            app:destination="@id/contactFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactFragment"
@@ -82,7 +85,12 @@
         android:id="@+id/addContactFragment"
         android:name="dev.sergeitimoshenko.simplecontacts.ui.add.AddContactFragment"
         android:label="fragment_add_contact"
-        tools:layout="@layout/fragment_add_contact" />
+        tools:layout="@layout/fragment_add_contact" >
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/updateContactFragment"
         android:name="dev.sergeitimoshenko.simplecontacts.ui.update.UpdateContactFragment"

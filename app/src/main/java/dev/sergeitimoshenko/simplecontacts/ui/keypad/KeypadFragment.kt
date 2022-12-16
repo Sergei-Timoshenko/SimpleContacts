@@ -1,60 +1,198 @@
 package dev.sergeitimoshenko.simplecontacts.ui.keypad
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import dev.sergeitimoshenko.simplecontacts.R
+import dev.sergeitimoshenko.simplecontacts.databinding.FragmentKeypadBinding
+import dev.sergeitimoshenko.simplecontacts.models.contact.Contact
+import dev.sergeitimoshenko.simplecontacts.models.contact.SimpleContact
+import dev.sergeitimoshenko.simplecontacts.models.mappers.ContactMapper
+import dev.sergeitimoshenko.simplecontacts.ui.keypad.adapters.KeypadAdapter
+import dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners.KeypadListener
+import dev.sergeitimoshenko.simplecontacts.utils.REQUEST_CALL
+import javax.inject.Inject
+import kotlin.math.log
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class KeypadFragment : Fragment(R.layout.fragment_keypad), KeypadListener {
+    private val viewModel: KeypadViewModel by viewModels()
+    private var binding: FragmentKeypadBinding? = null
+    private lateinit var keypadAdapter: KeypadAdapter
 
-/**
- * A simple [Fragment] subclass.
- * Use the [KeypadFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class KeypadFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    @Inject
+    lateinit var mapper: ContactMapper
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentKeypadBinding.bind(view)
+
+        // Setup buttons
+        binding?.apply {
+            btnEnterDigitOne.setOnClickListener {
+                viewModel.enterDigit("1")
+            }
+
+            btnEnterDigitTwo.setOnClickListener {
+                viewModel.enterDigit("2")
+            }
+
+            btnEnterDigitThree.setOnClickListener {
+                viewModel.enterDigit("3")
+            }
+
+            btnEnterDigitFour.setOnClickListener {
+                viewModel.enterDigit("4")
+            }
+
+            btnEnterDigitFive.setOnClickListener {
+                viewModel.enterDigit("5")
+            }
+
+            btnEnterDigitSix.setOnClickListener {
+                viewModel.enterDigit("6")
+            }
+
+            btnEnterDigitSeven.setOnClickListener {
+                viewModel.enterDigit("7")
+            }
+
+            btnEnterDigitEight.setOnClickListener {
+                viewModel.enterDigit("8")
+            }
+
+            btnEnterDigitNine.setOnClickListener {
+                viewModel.enterDigit("9")
+            }
+
+            btnEnterDigitZero.setOnClickListener {
+                viewModel.enterDigit("0")
+            }
+
+            btnEnterDigitZero.setOnLongClickListener {
+                viewModel.enterDigit("+")
+                true
+            }
+
+            btnEnterHash.setOnClickListener {
+                viewModel.enterDigit("#")
+            }
+
+            btnEnterAsterisk.setOnClickListener {
+                viewModel.enterDigit("*")
+            }
+
+            ibtnRemove.setOnClickListener {
+                viewModel.removeDigit()
+            }
+
+            ibtnRemove.setOnLongClickListener {
+                viewModel.removeAllDigits()
+                true
+            }
+
+            btnCall.setOnClickListener {
+                if (viewModel.phoneNumber.value != "") {
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(), Manifest.permission.CALL_PHONE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        ActivityCompat.requestPermissions(
+                            requireActivity(), arrayOf(Manifest.permission.CALL_PHONE), REQUEST_CALL
+                        )
+                    } else {
+                        val callIntent = Intent(
+                            Intent.ACTION_CALL, Uri.parse("tel:" + viewModel.phoneNumber.value)
+                        )
+                        startActivity(callIntent)
+                    }
+                }
+            }
+
+            // Hide bottom navigation view
+            activity?.findViewById<BottomNavigationView>(R.id.bnv_main)?.visibility = View.GONE
+
+            // Recycler view setup
+            keypadAdapter = KeypadAdapter(
+                this@KeypadFragment
+            )
+            binding?.rvKeypad?.apply {
+                adapter = keypadAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(true)
+            }
+
+            viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
+                if (contacts.isEmpty() && viewModel.phoneNumber.value?.isNotEmpty()!!) {
+                    keypadAdapter.differ.submitList(listOf("666"))
+                } else {
+                    keypadAdapter.differ.submitList(mapper.toSimpleContactList(contacts))
+                }
+            }
+
+            viewModel.phoneNumber.observe(viewLifecycleOwner) { phoneNumber ->
+                if (phoneNumber.isEmpty()) {
+                    binding?.ibtnRemove?.visibility = View.GONE
+                } else {
+                    binding?.ibtnRemove?.visibility = View.VISIBLE
+                }
+
+                binding?.tvPhoneNumber?.text = phoneNumber
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_keypad, container, false)
+    override fun onContactClick(contact: SimpleContact) {
+        val action = KeypadFragmentDirections.actionKeypadFragmentToContactFragment()
+        findNavController().navigate(action)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment KeypadFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            KeypadFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onCallButtonClick(phoneNumber: String) {
+        if (viewModel.phoneNumber.value != "") {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.CALL_PHONE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(), arrayOf(Manifest.permission.CALL_PHONE), REQUEST_CALL
+                )
+            } else {
+                val callIntent = Intent(
+                    Intent.ACTION_CALL, Uri.parse("tel:$phoneNumber")
+                )
+                startActivity(callIntent)
             }
+        }
+    }
+
+    override fun onAddContactClick() {
+//        val action = KeypadFragmentDirections.actionKeypadFragmentToAddContactFragment(phoneNumber)
+//        findNavController().navigate(action)
+        viewModel.insertContact(mapper.toSimpleContact(Contact("666", "666", viewModel.phoneNumber.value!!)))
+    }
+
+    override fun onSmsContactClick() {
+        val smsIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${viewModel.phoneNumber.value}"))
+        startActivity(smsIntent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+
+        // Show bottom navigation view
+        activity?.findViewById<BottomNavigationView>(R.id.bnv_main)?.visibility = View.VISIBLE
     }
 }
