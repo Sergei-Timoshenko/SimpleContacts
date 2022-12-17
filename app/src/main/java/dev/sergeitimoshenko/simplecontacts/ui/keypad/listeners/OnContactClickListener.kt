@@ -2,11 +2,7 @@ package dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners
 
 import dev.sergeitimoshenko.simplecontacts.models.contact.SimpleContact
 
-interface KeypadListener {
-    fun onAddContactClick()
-
-    fun onSmsContactClick()
-
+interface OnContactClickListener {
     fun onContactClick(contact: SimpleContact)
 
     fun onCallButtonClick(phoneNumber: String)

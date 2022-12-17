@@ -9,6 +9,6 @@ data class SimpleContact(
     val name: String,
     val surname: String,
     val phoneNumber: String,
-    val image: Bitmap? = null,
+    val photo: Bitmap? = null,
     val id: String
 ) : Parcelable

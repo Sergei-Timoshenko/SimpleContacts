@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/favoritesFragment">
+    app:startDestination="@id/contactsFragment">
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="dev.sergeitimoshenko.simplecontacts.ui.favorites.FavoritesFragment"
@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_favoritesFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />
+        <action
+            android:id="@+id/action_favoritesFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactsFragment"
@@ -39,6 +42,9 @@
         <action
             android:id="@+id/action_contactsFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />
+        <action
+            android:id="@+id/action_contactsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/keypadFragment"
@@ -54,7 +60,7 @@
     </fragment>
     <fragment
         android:id="@+id/contactFragment"
-        android:name="dev.sergeitimoshenko.simplecontacts.ui.contact.ContactFragment"
+        android:name="dev.sergeitimoshenko.simplecontacts.ui.add.contact.ContactFragment"
         android:label="fragment_contact"
         tools:layout="@layout/fragment_contact" >
         <action
@@ -75,6 +81,9 @@
         <action
             android:id="@+id/action_recentsFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_recentsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -96,4 +105,12 @@
         android:name="dev.sergeitimoshenko.simplecontacts.ui.update.UpdateContactFragment"
         android:label="fragment_update_contact"
         tools:layout="@layout/fragment_update_contact" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="dev.sergeitimoshenko.simplecontacts.ui.search.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_contactFragment"
+            app:destination="@id/contactFragment" />
+    </fragment>
 </navigation>

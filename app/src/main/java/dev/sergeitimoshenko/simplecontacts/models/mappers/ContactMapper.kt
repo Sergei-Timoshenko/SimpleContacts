@@ -16,7 +16,7 @@ class ContactMapper @Inject constructor() {
         name = contact.name,
         surname = contact.surname,
         phoneNumber = contact.phoneNumber,
-        image = contact.image,
+        photo = contact.photo,
         id = contact.id
     )
 

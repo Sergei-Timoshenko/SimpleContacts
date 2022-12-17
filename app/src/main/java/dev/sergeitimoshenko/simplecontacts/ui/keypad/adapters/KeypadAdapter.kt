@@ -1,6 +1,5 @@
 package dev.sergeitimoshenko.simplecontacts.ui.keypad.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -9,12 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.sergeitimoshenko.simplecontacts.databinding.ItemContactBinding
 import dev.sergeitimoshenko.simplecontacts.databinding.ItemPhoneNumberActionsBinding
 import dev.sergeitimoshenko.simplecontacts.models.contact.SimpleContact
-import dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners.KeypadListener
+import dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners.OnActionsClickListener
+import dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners.OnContactClickListener
 import dev.sergeitimoshenko.simplecontacts.utils.TYPE_ACTIONS
 import dev.sergeitimoshenko.simplecontacts.utils.TYPE_CONTACT
 
 class KeypadAdapter(
-    private val keypadListener: KeypadListener
+    private val onContactClickListener: OnContactClickListener,
+    private val onActionsClickListener: OnActionsClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Any>() {
@@ -45,22 +46,29 @@ class KeypadAdapter(
     inner class ContactViewHolder(private val binding: ItemContactBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {
-                keypadListener.onContactClick(differ.currentList[adapterPosition] as SimpleContact)
-            }
+            binding.apply {
+                root.setOnClickListener {
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                        onContactClickListener.onContactClick(differ.currentList[adapterPosition] as SimpleContact)
+                    }
+                }
 
-            binding.ibCall.setOnClickListener {
-                val currentContact = differ.currentList[adapterPosition] as SimpleContact
-                keypadListener.onCallButtonClick(currentContact.phoneNumber)
+                ibtnCall.setOnClickListener {
+                    val currentContact = differ.currentList[adapterPosition] as SimpleContact
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                        onContactClickListener.onCallButtonClick(currentContact.phoneNumber)
+                    }
+                }
             }
         }
 
         fun bind(currentContact: SimpleContact) {
             binding.apply {
-                tvContactName.text = "${currentContact.name} ${currentContact.surname}"
-                tvContactPhone.text = currentContact.phoneNumber
-                currentContact.image?.let { bitmap ->
-                    sivContactPhoto.setImageBitmap(bitmap)
+                tvContactName.text = currentContact.name
+                tvContactSurname.text = currentContact.surname
+                tvContactPhoneNumber.text = currentContact.phoneNumber
+                if (currentContact.photo != null) {
+                    sivContactPhoto.setImageBitmap(currentContact.photo)
                 }
             }
         }
@@ -70,11 +78,11 @@ class KeypadAdapter(
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.ibAddContact.setOnClickListener {
-                keypadListener.onAddContactClick()
+                onActionsClickListener.onAddContactClick()
             }
 
             binding.ibSendSms.setOnClickListener {
-                keypadListener.onSmsContactClick()
+                onActionsClickListener.onSmsContactClick()
             }
         }
     }
@@ -86,14 +94,17 @@ class KeypadAdapter(
             ContactViewHolder(binding)
         } else {
             val binding =
-                ItemPhoneNumberActionsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemPhoneNumberActionsBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             KeypadActionsViewHolder(binding)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return if (differ.currentList[position] is SimpleContact) {
-            Log.d("GGG", "getItemViewType: 123")
             TYPE_CONTACT
         } else {
             TYPE_ACTIONS

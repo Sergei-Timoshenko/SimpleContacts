@@ -21,10 +21,9 @@ import dev.sergeitimoshenko.simplecontacts.models.contact.Contact
 import dev.sergeitimoshenko.simplecontacts.models.contact.SimpleContact
 import dev.sergeitimoshenko.simplecontacts.models.mappers.ContactMapper
 import dev.sergeitimoshenko.simplecontacts.ui.keypad.adapters.KeypadAdapter
-import dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners.KeypadListener
+import dev.sergeitimoshenko.simplecontacts.ui.keypad.viewmodels.KeypadViewModel
 import dev.sergeitimoshenko.simplecontacts.utils.REQUEST_CALL
 import javax.inject.Inject
-import kotlin.math.log
 
 @AndroidEntryPoint
 class KeypadFragment : Fragment(R.layout.fragment_keypad), KeypadListener {
@@ -131,14 +130,29 @@ class KeypadFragment : Fragment(R.layout.fragment_keypad), KeypadListener {
             binding?.rvKeypad?.apply {
                 adapter = keypadAdapter
                 layoutManager = LinearLayoutManager(requireContext())
-                setHasFixedSize(true)
             }
 
             viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
+                var isContactExist = false
+                for (contact in contacts) {
+                    if (contact.phoneNumber == viewModel.phoneNumber.value) {
+                        isContactExist = true
+                        break
+                    }
+                }
+
                 if (contacts.isEmpty() && viewModel.phoneNumber.value?.isNotEmpty()!!) {
                     keypadAdapter.differ.submitList(listOf("666"))
-                } else {
+                } else if (contacts.isNotEmpty() && isContactExist && viewModel.phoneNumber.value?.isNotEmpty()!!) {
                     keypadAdapter.differ.submitList(mapper.toSimpleContactList(contacts))
+                } else if (contacts.isNotEmpty() && viewModel.phoneNumber.value?.isNotEmpty()!!) {
+                    val contactsWithActions = mutableListOf<Any>()
+                    contactsWithActions.addAll(mapper.toSimpleContactList(contacts)!!)
+                    contactsWithActions.add("666")
+                    Log.d("GGG", "onViewCreated: ${contactsWithActions.toString()}")
+                    keypadAdapter.differ.submitList(contactsWithActions.toList())
+                } else {
+                    keypadAdapter.differ.submitList(listOf())
                 }
             }
 

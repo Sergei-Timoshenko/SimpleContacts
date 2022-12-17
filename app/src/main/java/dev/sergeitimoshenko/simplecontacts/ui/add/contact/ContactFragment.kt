@@ -1,4 +1,4 @@
-package dev.sergeitimoshenko.simplecontacts.ui.contact
+package dev.sergeitimoshenko.simplecontacts.ui.add.contact
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

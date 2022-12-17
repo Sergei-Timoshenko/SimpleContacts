@@ -17,14 +17,14 @@ data class Contact(
     @ColumnInfo(name = "contact_surname")
     val surname: String,
 
-    @ColumnInfo(name = "contact_phone")
+    @ColumnInfo(name = "contact_phone_number")
     val phoneNumber: String,
 
     @ColumnInfo(name = "contact_email")
     val email: String? = null,
 
-    @ColumnInfo(name = "contact_image")
-    val image: Bitmap? = null,
+    @ColumnInfo(name = "contact_photo")
+    val photo: Bitmap? = null,
 
     @ColumnInfo(name = "contact_is_favorite")
     val isFavorite: Boolean = false,

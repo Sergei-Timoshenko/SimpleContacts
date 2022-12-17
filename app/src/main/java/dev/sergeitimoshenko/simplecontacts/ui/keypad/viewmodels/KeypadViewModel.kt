@@ -1,4 +1,4 @@
-package dev.sergeitimoshenko.simplecontacts.ui.keypad
+package dev.sergeitimoshenko.simplecontacts.ui.keypad.viewmodels
 
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
