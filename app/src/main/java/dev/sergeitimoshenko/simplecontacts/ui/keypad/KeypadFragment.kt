@@ -21,12 +21,14 @@ import dev.sergeitimoshenko.simplecontacts.models.contact.Contact
 import dev.sergeitimoshenko.simplecontacts.models.contact.SimpleContact
 import dev.sergeitimoshenko.simplecontacts.models.mappers.ContactMapper
 import dev.sergeitimoshenko.simplecontacts.ui.keypad.adapters.KeypadAdapter
+import dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners.OnActionsClickListener
+import dev.sergeitimoshenko.simplecontacts.ui.keypad.listeners.OnContactClickListener
 import dev.sergeitimoshenko.simplecontacts.ui.keypad.viewmodels.KeypadViewModel
 import dev.sergeitimoshenko.simplecontacts.utils.REQUEST_CALL
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class KeypadFragment : Fragment(R.layout.fragment_keypad), KeypadListener {
+class KeypadFragment : Fragment(R.layout.fragment_keypad), OnActionsClickListener, OnContactClickListener {
     private val viewModel: KeypadViewModel by viewModels()
     private var binding: FragmentKeypadBinding? = null
     private lateinit var keypadAdapter: KeypadAdapter
@@ -125,7 +127,7 @@ class KeypadFragment : Fragment(R.layout.fragment_keypad), KeypadListener {
 
             // Recycler view setup
             keypadAdapter = KeypadAdapter(
-                this@KeypadFragment
+                this@KeypadFragment, this@KeypadFragment
             )
             binding?.rvKeypad?.apply {
                 adapter = keypadAdapter
