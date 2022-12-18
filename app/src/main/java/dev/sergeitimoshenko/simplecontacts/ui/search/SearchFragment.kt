@@ -54,19 +54,8 @@ class SearchFragment : Fragment(R.layout.fragment_search), SearchListener {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
 
-        actionBarListener.showActionBar()
-
-        // Setup recycler view
-        val searchAdapter = SearchAdapter(this)
-        binding?.rvSearch?.apply {
-            adapter = searchAdapter
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-        }
-
-        viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
-            searchAdapter.submitList(mapper.toSimpleContactList(contacts))
-        }
+        // Show action bar
+        showActionBar()
 
         // Setup menu
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
@@ -89,12 +78,31 @@ class SearchFragment : Fragment(R.layout.fragment_search), SearchListener {
                 return false
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        // Setup recycler view
+        val searchAdapter = SearchAdapter(this)
+        setupRecyclerView(searchAdapter)
+
+        viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
+            searchAdapter.submitList(mapper.toSimpleContactList(contacts))
+        }
+    }
+
+    private fun showActionBar() {
+        actionBarListener.showActionBar()
+    }
+
+    private fun setupRecyclerView(searchAdapter: SearchAdapter) {
+        binding?.rvSearch?.apply {
+            adapter = searchAdapter
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+        }
     }
 
 
     override fun onContactClick(contact: SimpleContact) {
-        val action = SearchFragmentDirections.actionSearchFragmentToContactFragment()
-        findNavController().navigate(action)
+        // TODO
     }
 
     override fun onCallButtonClick(phoneNumber: String) {

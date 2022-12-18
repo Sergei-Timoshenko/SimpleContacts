@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,7 +27,8 @@ import dev.sergeitimoshenko.simplecontacts.utils.REQUEST_CALL
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class KeypadFragment : Fragment(R.layout.fragment_keypad), OnActionsClickListener, OnContactClickListener {
+class KeypadFragment : Fragment(R.layout.fragment_keypad), OnActionsClickListener,
+    OnContactClickListener {
     private val viewModel: KeypadViewModel by viewModels()
     private var binding: FragmentKeypadBinding? = null
     private lateinit var keypadAdapter: KeypadAdapter
@@ -41,6 +41,77 @@ class KeypadFragment : Fragment(R.layout.fragment_keypad), OnActionsClickListene
         binding = FragmentKeypadBinding.bind(view)
 
         // Setup buttons
+        setupButtons()
+        binding?.btnCall?.setOnClickListener {
+            if (viewModel.phoneNumber.value != "") {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(), Manifest.permission.CALL_PHONE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(), arrayOf(Manifest.permission.CALL_PHONE), REQUEST_CALL
+                    )
+                } else {
+                    val callIntent = Intent(
+                        Intent.ACTION_CALL, Uri.parse("tel:" + viewModel.phoneNumber.value)
+                    )
+                    startActivity(callIntent)
+                }
+            }
+        }
+
+        // Hide bottom navigation view
+        hideBottomNavigationView()
+
+        // Recycler view setup
+        keypadAdapter = KeypadAdapter(
+            this@KeypadFragment, this@KeypadFragment
+        )
+        setupRecyclerView()
+
+        viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
+            var isContactExist = false
+            for (contact in contacts) {
+                if (contact.phoneNumber == viewModel.phoneNumber.value) {
+                    isContactExist = true
+                    break
+                }
+            }
+
+            if (contacts.isEmpty() && viewModel.phoneNumber.value?.isNotEmpty()!!) {
+                keypadAdapter.differ.submitList(listOf("666"))
+            } else if (contacts.isNotEmpty() && isContactExist && viewModel.phoneNumber.value?.isNotEmpty()!!) {
+                keypadAdapter.differ.submitList(mapper.toSimpleContactList(contacts))
+            } else if (contacts.isNotEmpty() && viewModel.phoneNumber.value?.isNotEmpty()!!) {
+                val contactsWithActions = mutableListOf<Any>()
+                contactsWithActions.addAll(mapper.toSimpleContactList(contacts)!!)
+                contactsWithActions.add("666")
+
+                keypadAdapter.differ.submitList(contactsWithActions.toList())
+            } else {
+                keypadAdapter.differ.submitList(listOf())
+            }
+        }
+
+        viewModel.phoneNumber.observe(viewLifecycleOwner) { phoneNumber ->
+            if (phoneNumber.isEmpty()) {
+                binding?.ibtnRemove?.visibility = View.GONE
+            } else {
+                binding?.ibtnRemove?.visibility = View.VISIBLE
+            }
+
+            binding?.tvPhoneNumber?.text = phoneNumber
+        }
+    }
+
+    private fun setupRecyclerView() {
+        binding?.rvKeypad?.apply {
+            adapter = keypadAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun setupButtons() {
         binding?.apply {
             btnEnterDigitOne.setOnClickListener {
                 viewModel.enterDigit("1")
@@ -103,76 +174,15 @@ class KeypadFragment : Fragment(R.layout.fragment_keypad), OnActionsClickListene
                 viewModel.removeAllDigits()
                 true
             }
-
-            btnCall.setOnClickListener {
-                if (viewModel.phoneNumber.value != "") {
-                    if (ContextCompat.checkSelfPermission(
-                            requireContext(), Manifest.permission.CALL_PHONE
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        ActivityCompat.requestPermissions(
-                            requireActivity(), arrayOf(Manifest.permission.CALL_PHONE), REQUEST_CALL
-                        )
-                    } else {
-                        val callIntent = Intent(
-                            Intent.ACTION_CALL, Uri.parse("tel:" + viewModel.phoneNumber.value)
-                        )
-                        startActivity(callIntent)
-                    }
-                }
-            }
-
-            // Hide bottom navigation view
-            activity?.findViewById<BottomNavigationView>(R.id.bnv_main)?.visibility = View.GONE
-
-            // Recycler view setup
-            keypadAdapter = KeypadAdapter(
-                this@KeypadFragment, this@KeypadFragment
-            )
-            binding?.rvKeypad?.apply {
-                adapter = keypadAdapter
-                layoutManager = LinearLayoutManager(requireContext())
-            }
-
-            viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
-                var isContactExist = false
-                for (contact in contacts) {
-                    if (contact.phoneNumber == viewModel.phoneNumber.value) {
-                        isContactExist = true
-                        break
-                    }
-                }
-
-                if (contacts.isEmpty() && viewModel.phoneNumber.value?.isNotEmpty()!!) {
-                    keypadAdapter.differ.submitList(listOf("666"))
-                } else if (contacts.isNotEmpty() && isContactExist && viewModel.phoneNumber.value?.isNotEmpty()!!) {
-                    keypadAdapter.differ.submitList(mapper.toSimpleContactList(contacts))
-                } else if (contacts.isNotEmpty() && viewModel.phoneNumber.value?.isNotEmpty()!!) {
-                    val contactsWithActions = mutableListOf<Any>()
-                    contactsWithActions.addAll(mapper.toSimpleContactList(contacts)!!)
-                    contactsWithActions.add("666")
-                    Log.d("GGG", "onViewCreated: ${contactsWithActions.toString()}")
-                    keypadAdapter.differ.submitList(contactsWithActions.toList())
-                } else {
-                    keypadAdapter.differ.submitList(listOf())
-                }
-            }
-
-            viewModel.phoneNumber.observe(viewLifecycleOwner) { phoneNumber ->
-                if (phoneNumber.isEmpty()) {
-                    binding?.ibtnRemove?.visibility = View.GONE
-                } else {
-                    binding?.ibtnRemove?.visibility = View.VISIBLE
-                }
-
-                binding?.tvPhoneNumber?.text = phoneNumber
-            }
         }
     }
 
+    private fun hideBottomNavigationView() {
+        activity?.findViewById<BottomNavigationView>(R.id.bnv_main)?.visibility = View.GONE
+    }
+
     override fun onContactClick(contact: SimpleContact) {
-        val action = KeypadFragmentDirections.actionKeypadFragmentToContactFragment()
-        findNavController().navigate(action)
+        // TODO
     }
 
     override fun onCallButtonClick(phoneNumber: String) {
@@ -194,13 +204,13 @@ class KeypadFragment : Fragment(R.layout.fragment_keypad), OnActionsClickListene
     }
 
     override fun onAddContactClick() {
-//        val action = KeypadFragmentDirections.actionKeypadFragmentToAddContactFragment(phoneNumber)
-//        findNavController().navigate(action)
-        viewModel.insertContact(mapper.toSimpleContact(Contact("666", "666", viewModel.phoneNumber.value!!)))
+        val action = KeypadFragmentDirections.actionKeypadFragmentToAddContactFragment(viewModel.phoneNumber.value)
+        findNavController().navigate(action)
     }
 
     override fun onSmsContactClick() {
-        val smsIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${viewModel.phoneNumber.value}"))
+        val smsIntent =
+            Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${viewModel.phoneNumber.value}"))
         startActivity(smsIntent)
     }
 

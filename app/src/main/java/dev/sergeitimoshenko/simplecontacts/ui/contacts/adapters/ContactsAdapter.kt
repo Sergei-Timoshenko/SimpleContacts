@@ -11,13 +11,15 @@ import dev.sergeitimoshenko.simplecontacts.databinding.ItemContactBinding
 import dev.sergeitimoshenko.simplecontacts.models.contact.SimpleContact
 import dev.sergeitimoshenko.simplecontacts.ui.contacts.listeners.DeleteAreaListener
 import dev.sergeitimoshenko.simplecontacts.ui.contacts.listeners.DragAndDropListener
+import dev.sergeitimoshenko.simplecontacts.ui.contacts.listeners.OnContactClickListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ContactsAdapter(
     private val deleteAreaListener: DeleteAreaListener,
-    private val dragAndDropListener: DragAndDropListener
+    private val dragAndDropListener: DragAndDropListener,
+    private val onContactClickListener: OnContactClickListener
 ) :
     ListAdapter<SimpleContact, ContactsAdapter.ContactViewHolder>(DIFF_CALLBACK) {
     companion object {
@@ -47,10 +49,13 @@ class ContactsAdapter(
                         view.startDragAndDrop(data, shadowBuilder, view, 0)
 
                         deleteAreaListener.showDeleteArea()
-                        dragAndDropListener.onDrop(getItem(adapterPosition).id)
+                        dragAndDropListener.onDeleteAreaFabDrop(getItem(adapterPosition).id)
 
                         true
                     }
+                }
+                root.setOnClickListener {
+                    onContactClickListener.onContactClick(getItem(adapterPosition).id)
                 }
             }
         }

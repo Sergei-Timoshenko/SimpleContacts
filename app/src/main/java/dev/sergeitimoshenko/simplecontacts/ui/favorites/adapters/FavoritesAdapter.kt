@@ -50,7 +50,7 @@ class FavoritesAdapter(
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-    val currentContact = getItem(position)
+        val currentContact = getItem(position)
         holder.bind(currentContact)
     }
 }

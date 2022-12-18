@@ -1,40 +1,34 @@
-package dev.sergeitimoshenko.simplecontacts.ui.add
+package dev.sergeitimoshenko.simplecontacts.ui.edit
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.View
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dev.sergeitimoshenko.simplecontacts.R
-import dev.sergeitimoshenko.simplecontacts.databinding.FragmentAddContactBinding
+import dev.sergeitimoshenko.simplecontacts.databinding.FragmentEditContactBinding
 import dev.sergeitimoshenko.simplecontacts.models.contact.Contact
-import dev.sergeitimoshenko.simplecontacts.ui.add.viewmodels.AddContactViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import dev.sergeitimoshenko.simplecontacts.ui.edit.viewmodels.EditContactViewModel
 
 @AndroidEntryPoint
-class AddContactFragment : Fragment(R.layout.fragment_add_contact) {
-    private var binding: FragmentAddContactBinding? = null
-    private val viewModel: AddContactViewModel by viewModels()
-    private val navArgs: AddContactFragmentArgs by navArgs()
-    private var photo: Bitmap? = null
+class EditContactFragment : Fragment(R.layout.fragment_edit_contact) {
+    private var binding: FragmentEditContactBinding? = null
+    private val viewModel: EditContactViewModel by viewModels()
+    private val navArgs: EditContactFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentAddContactBinding.bind(view)
-
-        if (navArgs.phoneNumber != null) {
-            binding?.etContactPhoneNumber?.setText(navArgs.phoneNumber)
-        }
+        binding = FragmentEditContactBinding.bind(view)
+        var photo = navArgs.contact.photo
 
         val startImagePickerForResult =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -49,37 +43,20 @@ class AddContactFragment : Fragment(R.layout.fragment_add_contact) {
             }
 
         binding?.apply {
+            ivPhoto.setImageBitmap(navArgs.contact.photo)
+
             ivPhoto.setOnClickListener {
                 startImagePickerForResult.launch("image/*")
             }
 
             btnSave.setOnClickListener {
-                val name = etContactName.text.toString()
-                val surname = etContactSurname.text.toString()
-                val phoneNumber = etContactPhoneNumber.text.toString()
-                val email = etContactEmail.text.toString()
-                val isFavorite = cbIsFavourite.isChecked
-                val contact = Contact(
-                    name, surname, phoneNumber, email, photo, isFavorite
-                )
-
-                if (name.isNotEmpty() && surname.isNotEmpty() && phoneNumber.isNotEmpty()) {
-                    viewModel.insertContact(contact)
-                    findNavController().popBackStack()
-                } else {
-                    Toast.makeText(
-                        requireContext(), "Enter name, surname and phone number", Toast.LENGTH_SHORT
-                    ).show()
-                }
+                viewModel.updateContact(Contact("Is", "Updated", "666", "666", photo, false, navArgs.contact.id))
+                findNavController().popBackStack()
             }
         }
     }
 
-    fun resizeBitmap(bitmap: Bitmap, bitmapWidth: Int, bitmapHeight: Int): Bitmap {
-        return Bitmap.createScaledBitmap(bitmap, bitmapWidth, bitmapHeight, true)
-    }
-
-    fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap? {
+    private fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap? {
         var width = image.width
         var height = image.height
         val bitmapRatio = width.toFloat() / height.toFloat()

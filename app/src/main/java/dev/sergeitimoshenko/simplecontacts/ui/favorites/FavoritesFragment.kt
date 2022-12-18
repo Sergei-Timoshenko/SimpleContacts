@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import dev.sergeitimoshenko.simplecontacts.R
 import dev.sergeitimoshenko.simplecontacts.databinding.FragmentFavoritesBinding
 import dev.sergeitimoshenko.simplecontacts.models.contact.SimpleContact
+import dev.sergeitimoshenko.simplecontacts.ui.contacts.ContactsFragmentDirections
 import dev.sergeitimoshenko.simplecontacts.ui.favorites.adapters.FavoritesAdapter
 import dev.sergeitimoshenko.simplecontacts.ui.favorites.listeners.OnContactClickListener
 import dev.sergeitimoshenko.simplecontacts.utils.REQUEST_CALL
@@ -28,26 +29,39 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites), OnContactClickL
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFavoritesBinding.bind(view)
 
-        // Open keypad
-        binding?.fabOpenKeypad?.setOnClickListener {
-            val action = FavoritesFragmentDirections.actionFavoritesFragmentToKeypadFragment()
-            findNavController().navigate(action)
-        }
+        // Custom action bar
+        setupActionBar()
 
         // setup recycler view
         favoritesAdapter = FavoritesAdapter(this)
+        setupRecyclerView()
+
+        // Open keypad
+        openKeypad()
+
+        favoritesAdapter.submitList(listOf(SimpleContact("666", "666", "666", null, id = "1"), SimpleContact("666", "666", "666", null, id = "2"), SimpleContact("666", "666", "666", null, id = "3")))
+    }
+
+    private fun setupActionBar() {
+        binding?.actionBar?.root?.setOnClickListener {
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToSearchFragment()
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun setupRecyclerView() {
         binding?.rvFavorites?.apply {
             adapter = favoritesAdapter
             layoutManager = GridLayoutManager(context, 3)
             setHasFixedSize(true)
         }
-
-        favoritesAdapter.submitList(listOf(SimpleContact("666", "666", "666", null, id = "1"), SimpleContact("666", "666", "666", null, id = "2"), SimpleContact("666", "666", "666", null, id = "3")))
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
+    private fun openKeypad() {
+        binding?.fabOpenKeypad?.setOnClickListener {
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToKeypadFragment()
+            findNavController().navigate(action)
+        }
     }
 
     override fun onContactClick(phoneNumber: String) {
@@ -64,5 +78,10 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites), OnContactClickL
             )
             startActivity(callIntent)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
     }
 }
